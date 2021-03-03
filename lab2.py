@@ -3,20 +3,21 @@ import networkx as nx
 import itertools as it
 
 INPUT_ARRAY = [
-    [0, 1, 1, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 1, 0, 0, 0],
-    [0, 0, 0, 1, 0, 1, 0, 1],
-    [0, 0, 0, 0, 1, 1, 0, 1],
-    [0, 0, 0, 0, 0, 1, 1, 0],
-    [0, 0, 0, 0, 0, 0, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0], ]
+    [0, 0, 1, 1, 0, 0, 0, 0, 0],
+    [0, 0, 1, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 1, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 1, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0], ]
 
-PROBABILITY_ARRAY = [0.5, 0.6, 0.7, 0.8, 0.85, 0.9, 0.92, 0.94]
+PROBABILITY_ARRAY = [0.05, 0.96, 0.64, 0.84, 0.09, 0.65, 0.43, 0.22, 0.71]
 
-STARTING_ELEMENT = [1]
+STARTING_ELEMENT = [1, 2]
 
-END_ELEMENT = [7, 8]
+END_ELEMENT = [8, 9]
 
 
 def values_check():
@@ -116,6 +117,9 @@ def lab2():
     path_list = get_path_list(G)
 
     print('Кількість можливих шляхів: {:}'.format(len(path_list)))
+    print('Шлях по вершинам')
+    for path in path_list:
+        print([n+1 for n in path])
     working_states = get_state_list(path_list)
     print('Кількість можливих робочих варіантів: {:}'.format(len(working_states)))
     probabilities = get_probability(working_states)
