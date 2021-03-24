@@ -18,6 +18,10 @@ STARTING_ELEMENT = [1]
 
 END_ELEMENT = [7, 8]
 
+TIME = 1000
+
+K = 1
+
 
 def values_check():
     if not INPUT_ARRAY or not INPUT_ARRAY[0]:
@@ -99,12 +103,12 @@ def get_state_list(path_list):
     return working_states
 
 
-def get_probability(working_sates):
+def get_probability(working_sates, prob=PROBABILITY_ARRAY):
     probability = []
     for state in working_sates:
         state_prob = 1
         for i in range(len(state)):
-            state_prob *= abs(1 - state[i] - PROBABILITY_ARRAY[i])
+            state_prob *= abs(1 - state[i] - prob[i])
         probability.append(state_prob)
     return probability
 
@@ -126,6 +130,62 @@ def lab2():
     print('\nЙмовірність безвідмовної роботи системи: {:.5}'.format(sum(probabilities)))
 
 
+def get_t(p):
+    return (-1 * TIME) / np.log(p)
+
+
+def lab3():
+    a = np.asarray(INPUT_ARRAY)
+    G = nx.DiGraph(a)
+    path_list = get_path_list(G)
+    working_states = get_state_list(path_list)
+    probabilities = get_probability(working_states)
+    p_system = sum(probabilities)
+    q_system = 1 - p_system
+    t_system = get_t(p_system)
+    pqt_system = [p_system, q_system, t_system]
+    q_res_system = q_system / np.math.factorial(K + 1)
+    p_res_system = 1 - q_res_system
+    t_res_system = get_t(p_res_system)
+    pqt_res_system = [p_res_system, q_res_system, t_res_system]
+    g_pqt_res_system = [pqt_res_system[i] / pqt_system[i] for i in range(len(pqt_system))]
+    print(
+        'Ймовірність відмови на час {0} годин = {2:.5}\n'
+        'Ймовірність безвідмовної роботи на час {0} годин = {1:.5}\n'
+        'Середній наробіток до відмови системи без резервування = {3:.5}\n'.format(TIME, p_system, q_system, t_system))
+    print(
+        'Ймовірність відмови на час {0} годин системи з загальним ненавантаженим резервуванням з кратністю {4} = {2:.5}\n'
+        'Ймовірність безвідмовної роботи на час {0} годин системи з загальним ненавантаженим резервуванням = {1:.5}\n'
+        'Середній наробіток до відмови системи з загальним ненавантаженим резервуванням = {3:.5}\n'.format(
+            TIME, p_res_system, q_res_system, t_res_system, K))
+    print(
+        'Виграш надійності протягом часу {0} годин за ймовірністю відмов = {1[1]:.5}\n'
+        'Виграш надійності протягом часу {0} годин за ймовірністю безвідмовної роботи = {1[0]:.5}\n'
+        'Виграш надійності за середнім часом безвідмовної роботи: = {1[2]:.5}\n'.format(
+            TIME, g_pqt_res_system, K))
+    q_elemets = [(1 - x) ** (K + 1) for x in PROBABILITY_ARRAY]
+    p_elemets = [1 - x for x in q_elemets]
+    print(
+        'Ймовірність відмови та безвідмовної роботи кожного елемента системи при його навантаженому резервуванні з кратністю {}'.format(
+            K))
+    for i in range(len(q_elemets)):
+        print('Q = {:.5} P = {:.5}'.format(q_elemets[i], p_elemets[i]))
+    probabilities = get_probability(working_states, p_elemets)
+    p_res_system_2 = sum(probabilities)
+    q_res_system_2 = 1 - p_res_system_2
+    t_res_system_2 = get_t(p_res_system_2)
+    pqt_res_system_2 = [p_res_system_2, q_res_system_2, t_res_system_2]
+    g_pqt_res_system_2 = [pqt_res_system_2[i] / pqt_system[i] for i in range(len(pqt_system))]
+    print(
+        '\nЙмовірності відмови системи в цілому = {2:.5}\n'
+        'Ймовірність безвідмовної роботи системи в цілому = {1:.5}\n'
+        'Середній наробіток до відмови системи в цілому = {3:.5}\n'.format(TIME, p_res_system_2, q_res_system_2, t_res_system_2))
+    print(
+        'Виграш надійності за ймовірністю відмов = {1[1]:.5}\n'
+        'Виграш надійності за ймовірністю безвідмовної роботи = {1[0]:.5}\n'
+        'Виграш надійності за середнім часом безвідмовної роботи: = {1[2]:.5}\n'.format(
+            TIME, g_pqt_res_system_2, K))
+
 if __name__ == '__main__':
     if values_check():
-        lab2()
+        lab3()
